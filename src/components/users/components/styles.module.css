@@ -1,0 +1,21 @@
+.searchInput {
+  margin-right: 30px;
+}
+
+.listTitle {
+  font-weight: 700;
+  font-size: 30px;
+}
+
+.userContainer {
+  display: flex;
+  flex-shrink: 1;
+}
+
+.prohibited {
+  background-color: red;
+}
+
+.text {
+  flex: 1 0 25%;
+}

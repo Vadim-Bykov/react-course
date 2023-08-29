@@ -1,4 +1,8 @@
-import { FilterableProductTable } from '@/components/shop/FilterableProductTable';
+// 'use client';
+
+import { FilterableUserList } from '@/components/users/FilterableUserList';
+import { USERS } from '@/components/users/constants/users';
+import { useEffect, useState } from 'react';
 
 export interface Product {
   category: string;
@@ -7,15 +11,43 @@ export interface Product {
   name: string;
 }
 
-const PRODUCTS: Product[] = [
-  { category: 'Fruits', price: '$1', stocked: true, name: 'Apple' },
-  { category: 'Fruits', price: '$1', stocked: true, name: 'Dragonfruit' },
-  { category: 'Fruits', price: '$2', stocked: false, name: 'Passionfruit' },
-  { category: 'Vegetables', price: '$2', stocked: true, name: 'Spinach' },
-  { category: 'Vegetables', price: '$4', stocked: false, name: 'Pumpkin' },
-  { category: 'Vegetables', price: '$1', stocked: true, name: 'Peas' },
-];
-
 export default function App() {
-  return <FilterableProductTable products={PRODUCTS} />;
+  // const [users, setUsers] = useState<User[]>();
+  // useEffect(() => {
+  //   const getUsers = async () => {
+  //     const res = await fetch('https://jsonplaceholder.org/users');
+  //     if (res?.ok) {
+  //       const data = await res.json();
+  //       console.log(data);
+
+  //       setUsers(data);
+  //     }
+  //   };
+
+  //   getUsers();
+  // }, []);
+
+  // if (!users?.length) return <div>Loading...</div>;
+
+  return <FilterableUserList users={USERS} />;
+  // return (
+  //   <div>
+  //     <User />
+  //     <div>
+  //       <span>Name: John.</span>
+  //       <span>Birth date: 2001-11-03</span>
+  //       <span>Age: 35</span>
+  //     </div>
+  //   </div>
+  // );
+}
+
+function User() {
+  return (
+    <div>
+      <span>Name: John.</span>
+      <span>Birth date: 2001-11-03</span>
+      <span>Age: 35</span>
+    </div>
+  );
 }
