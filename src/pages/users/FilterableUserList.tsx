@@ -15,7 +15,6 @@ export function FilterableUserList({ users }: { users: User[] }) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        padding: 20,
       }}
       // className={styles.container}
     >

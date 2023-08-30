@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import { User as UserType } from '../types';
 import { User } from './User';
-import { MIN_AGE } from '@/components/users/constants/rules';
+import { MIN_AGE } from '@/pages/users/constants/rules';
 
 export function UserList({
   users,

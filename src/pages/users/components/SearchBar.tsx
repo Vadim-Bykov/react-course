@@ -1,4 +1,4 @@
-import { MIN_AGE } from '@/components/users/constants/rules';
+import { MIN_AGE } from '@/pages/users/constants/rules';
 import styles from './styles.module.css';
 
 export function SearchBar({

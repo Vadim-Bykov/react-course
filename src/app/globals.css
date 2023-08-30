@@ -21,3 +21,7 @@ input {
   padding: 5px;
   border-radius: 5px;
 }
+
+body {
+  overflow-y: scroll; /* Show vertical scrollbar */
+}
