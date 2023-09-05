@@ -1,77 +1,81 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-type FibFn = (n: number) => number;
-
-const fib: FibFn = (n) => {
-  return n <= 1 ? n : fib(n - 1) + fib(n - 2);
-};
-
-// const getExpensiveColors = () => {
-//   for (let index = 0; index < 1_000_000_000; index++) {
-//     //  do something
-//   }
-//   return ['white', 'black'];
-// };
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 export function HomePage() {
-  const [number, setNumber] = useState(0);
   const [randomText, setRandomText] = useState('');
+  const renders = useRef(0);
 
-  // const fib: FibFn = (n) => {
-  //   return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setRandomText(e.target.value);
+    renders.current++;
+  };
+
+  // useEffect(() => {
+  //   console.log('ref object', renders.current);
+  // }, [renders]);
+
+  // const inputRef = useRef<HTMLInputElement>(null);
+  // const setFocus = () => {
+  //   inputRef.current?.focus();
   // };
 
-  // useCallback returns a function
-  // const fib: FibFn = useCallback((n) => {
-  //   return n <= 1 ? n : fib(n - 1) + fib(n - 2);
-  // }, []);
+  // const timerId = useRef<NodeJS.Timeout>();
+  // const [seconds, setSeconds] = useState(0);
 
-  const fibonacciSequenceResult = fib(number);
-  // useMemo returns a value
-  // const fibonacciSequenceResult = useMemo(() => fib(number), [number, fib]);
+  // const startTimer = () => {
+  //   timerId.current = setInterval(() => {
+  //     renders.current++;
+  //     setSeconds((prev) => prev + 1);
+  //   }, 1000);
+  // };
 
-  // // React understands that fibonacciSequenceResult is a primitive value and useEffect doesn't rerender
-  // useEffect(() => {
-  //   console.log('New fibonacciSequenceResult');
-  // }, [ fibonacciSequenceResult ]);
+  // const stopTimer = () => {
+  //   clearInterval(timerId.current);
+  //   timerId.current = undefined;
+  // };
 
-  // const colors = getExpensiveColors();
-  // // const colors = useMemo(() => getExpensiveColors(), []);
-
-  // // [] === [] false and useEffect rerenders
-  // useEffect(() => {
-  //   console.log('New colors');
-  // }, [colors]);
+  // const resetTimer = () => {
+  //   stopTimer();
+  //   if (seconds) {
+  //     renders.current++;
+  //     setSeconds(0);
+  //   }
+  // };
 
   return (
     <div>
-      <div className='mb-10'>
-        <div>Fibonacci Sequence</div>
-        <input
-          type='text'
-          value={number}
-          placeholder='Fibonacci...'
-          onChange={(e) => {
-            const value = e.target.value;
-            if (typeof +value === 'number') {
-              return setNumber(+value);
-            }
-            return;
-          }}
-        />
-        <div>Fibonacci Sequence result: {fibonacciSequenceResult}</div>
-      </div>
-
       <div>
-        <div>Random text</div>
         <input
+          // ref={inputRef}
           type='text'
           value={randomText}
           placeholder='Random text'
-          onChange={(e) => setRandomText(e.target.value)}
+          onChange={onChange}
         />
+
+        {/* <p>Renders: {renders.current}</p>
+        <button onClick={setFocus} className='my-5'>
+          Focus
+        </button> */}
+
+        {/* <div>
+          <p>Seconds: {seconds}</p>
+          <button className='mr-5' onClick={startTimer}>
+            Start
+          </button>
+          <button className='mr-5' onClick={stopTimer}>
+            Stop
+          </button>
+          <button onClick={resetTimer}>Reset</button>
+        </div> */}
       </div>
     </div>
   );
