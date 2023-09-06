@@ -1,82 +1,118 @@
 'use client';
 
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { Reducer, useReducer, useState } from 'react';
+
+type Colors = 'gold' | 'black';
+
+// interface State {
+//   color: Colors;
+//   randomText: string;
+//   count: number;
+// }
+
+// enum ActionType {
+//   ChangeText = 'CHANGE_TEXT',
+//   ChangeColor = 'CHANGE_COLOR',
+//   Increment = 'INCREMENT',
+//   Decrement = 'DECREMENT',
+// }
+
+// interface Action {
+//   type: ActionType;
+//   payload?: any;
+// }
+
+// const reducer: Reducer<State, Action> = (state, action) => {
+//   switch (action.type) {
+//     case ActionType.ChangeText:
+//       return { ...state, randomText: action.payload };
+
+//     case ActionType.Increment:
+//       return { ...state, count: state.count + 1 };
+
+//     case ActionType.Decrement:
+//       return { ...state, count: state.count - 1 };
+
+//     case ActionType.ChangeColor:
+//       return { ...state, color: state.color === 'gold' ? 'black' : 'gold' };
+
+//     default:
+//       return state;
+//   }
+// };
+
+// const initialState: State = {
+//   color: 'black',
+//   randomText: '',
+//   count: 0,
+// };
 
 export function HomePage() {
   const [randomText, setRandomText] = useState('');
-  const renders = useRef(0);
+  const [color, setColor] = useState<Colors>('black');
+  const [count, setCount] = useState(0);
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setRandomText(e.target.value);
-    renders.current++;
-  };
-
-  // useEffect(() => {
-  //   console.log('ref object', renders.current);
-  // }, [renders]);
-
-  // const inputRef = useRef<HTMLInputElement>(null);
-  // const setFocus = () => {
-  //   inputRef.current?.focus();
-  // };
-
-  // const timerId = useRef<NodeJS.Timeout>();
-  // const [seconds, setSeconds] = useState(0);
-
-  // const startTimer = () => {
-  //   timerId.current = setInterval(() => {
-  //     renders.current++;
-  //     setSeconds((prev) => prev + 1);
-  //   }, 1000);
-  // };
-
-  // const stopTimer = () => {
-  //   clearInterval(timerId.current);
-  //   timerId.current = undefined;
-  // };
-
-  // const resetTimer = () => {
-  //   stopTimer();
-  //   if (seconds) {
-  //     renders.current++;
-  //     setSeconds(0);
-  //   }
-  // };
+  // const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    <div>
+    <>
       <div>
         <input
-          // ref={inputRef}
           type='text'
+          placeholder='Use state text'
           value={randomText}
-          placeholder='Random text'
-          onChange={onChange}
+          onChange={(e) => setRandomText(e.target.value)}
         />
 
-        {/* <p>Renders: {renders.current}</p>
-        <button onClick={setFocus} className='my-5'>
-          Focus
-        </button> */}
-
-        {/* <div>
-          <p>Seconds: {seconds}</p>
-          <button className='mr-5' onClick={startTimer}>
-            Start
+        <div className='mt-3'>
+          <p style={{ color }}>Count: {count}</p>
+          <button className='mr-5' onClick={() => setCount((prev) => prev - 1)}>
+            -
           </button>
-          <button className='mr-5' onClick={stopTimer}>
-            Stop
+          <button className='mr-5' onClick={() => setCount((prev) => prev + 1)}>
+            +
           </button>
-          <button onClick={resetTimer}>Reset</button>
-        </div> */}
+          <button
+            onClick={() => {
+              setColor(color === 'gold' ? 'black' : 'gold');
+            }}
+          >
+            Color
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* <div className='mt-10'>
+        <input
+          type='text'
+          placeholder='Use reducer text'
+          value={state.randomText}
+          onChange={(e) =>
+            dispatch({
+              type: ActionType.ChangeText,
+              payload: e.target.value,
+            })
+          }
+        />
+        <div className='mt-3'>
+          <p style={{ color: state.color }}>Count: {state.count}</p>
+          <button
+            className='mr-5'
+            onClick={() => dispatch({ type: ActionType.Decrement })}
+          >
+            -
+          </button>
+          <button
+            className='mr-5'
+            onClick={() => dispatch({ type: ActionType.Increment })}
+          >
+            +
+          </button>
+          <button onClick={() => dispatch({ type: ActionType.ChangeColor })}>
+            Color
+          </button>
+        </div>
+      </div> */}
+    </>
   );
 }
