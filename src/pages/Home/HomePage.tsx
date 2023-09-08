@@ -1,185 +1,121 @@
 "use client";
 
-import clsx from "clsx";
 import React, {
-  Dispatch,
-  Reducer,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useReducer,
+  ElementRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 
-type Colors = "gold" | "black";
-
-interface State {
-  color: Colors;
-  randomText: string;
-  count: number;
+interface ModalData {
+  number: number;
+  visible: boolean;
 }
-
-enum ActionType {
-  ChangeText = "CHANGE_TEXT",
-  ChangeColor = "CHANGE_COLOR",
-  Increment = "INCREMENT",
-  Decrement = "DECREMENT",
-}
-
-interface Action {
-  type: ActionType;
-  payload?: any;
-}
-
-const reducer: Reducer<State, Action> = (state, action) => {
-  switch (action.type) {
-    case ActionType.ChangeText:
-      return { ...state, randomText: action.payload };
-
-    case ActionType.Increment:
-      return { ...state, count: state.count + 1 };
-
-    case ActionType.Decrement:
-      return { ...state, count: state.count - 1 };
-
-    case ActionType.ChangeColor:
-      return { ...state, color: state.color === "gold" ? "black" : "gold" };
-
-    default:
-      return state;
-  }
-};
-
-const initialState: State = {
-  color: "black",
-  randomText: "",
-  count: 0,
-};
-
-interface Context {
-  state: State;
-  dispatch: Dispatch<Action>;
-}
-
-const Context = React.createContext<Context>({
-  state: initialState,
-  dispatch: () => {},
-});
-
-const useAppContext = () => useContext(Context);
 
 export function HomePage() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  // const modalRef = useRef<ElementRef<typeof ModalWithForwardRef>>(null);
+  const [modalData, setModalData] = useState<ModalData>({
+    number: 0,
+    visible: false,
+  });
+
+  console.log("Paren rendered");
+
+  const openModal = (number: number) => {
+    setModalData({ number, visible: true });
+  };
+
+  const closeModal = (number: number) => {
+    setModalData({ visible: false, number });
+  };
+
+  // const openModal = (number: number) => {
+  //   modalRef.current?.open(number);
+  // };
 
   return (
-    <Context.Provider value={{ dispatch, state }}>
-      <InputComponent />
-      <p>{state.randomText}</p>
-
-      <ButtonBlock />
-    </Context.Provider>
+    <div className="grid justify-items-center gap-5">
+      <Modal modalData={modalData} closeModal={closeModal} />
+      {/* <ModalWithForwardRef ref={modalRef} /> */}
+      <Users openModal={openModal} />
+    </div>
   );
 }
 
-const InputComponent = () => {
-  return (
-    <>
-      <div>Description and some content</div>
+const Users = ({ openModal }: { openModal: (number: number) => void }) => {
+  console.log("Users list rendered");
 
-      <Field />
-    </>
-  );
+  const users = new Array(10).fill(1).map((item, index) => {
+    console.log(`User ${index + 1} rendered`);
+
+    return (
+      <div key={index} className="flex p-3 border rounded-xl">
+        <div className="w-10 h-10 bg-slate-600 rounded-xl text-white flex items-center justify-center mr-5">
+          {index + 1}
+        </div>
+        <button onClick={() => openModal(index + 1)}>Open {index + 1}</button>
+      </div>
+    );
+  });
+
+  return users;
 };
 
-const Field = () => {
-  const {
-    state: { randomText },
-    dispatch,
-  } = useAppContext();
-  // const colorClass = useColorHandler();
+const Modal = ({
+  modalData,
+  closeModal,
+}: {
+  modalData: ModalData;
+  closeModal: (number: number) => void;
+}) => {
+  console.log("Modal rendered");
+
+  if (!modalData.visible) return null;
 
   return (
-    <input
-      type="text"
-      placeholder="Use reducer text"
-      value={randomText}
-      // className={colorClass}
-      onChange={(e) =>
-        dispatch({
-          type: ActionType.ChangeText,
-          payload: e.target.value,
-        })
-      }
-    />
-  );
-};
+    <div className="absolute w-1/2 aspect-square bg-blue-400 rounded-2xl flex flex-col items-center justify-center px-8">
+      <h2 className="text-2xl text-center mb-5">User {modalData.number}</h2>
 
-const colors = [
-  "bg-red-100",
-  "bg-red-200",
-  "bg-red-300",
-  "bg-red-400",
-  "bg-red-500",
-  "bg-red-600",
-  "bg-red-700",
-  "bg-red-800",
-  "bg-red-900",
-];
-
-const ButtonBlock = () => {
-  const {
-    state: { color, count },
-    dispatch,
-  } = useAppContext();
-
-  const [colorClass, setColorClass] = useState("bg-red-900");
-
-  useEffect(() => {
-    const value = Math.floor(Math.random() * colors.length);
-    const colorString = colors[value];
-    setColorClass(colorString);
-  }, [count]);
-
-  // const colorClass = useColorHandler();
-
-  return (
-    <div className="mt-3">
-      <div className={clsx(["w-10 h-10 mr-5", colorClass])} />
-      <p style={{ color: color }}>Count: {count}</p>
-      <button
-        className="mr-5"
-        onClick={() => dispatch({ type: ActionType.Decrement })}
-      >
-        -
-      </button>
-      <button
-        className="mr-5"
-        onClick={() => dispatch({ type: ActionType.Increment })}
-      >
-        +
-      </button>
-      <button
-        className={clsx(["mr-5", colorClass])}
-        onClick={() => dispatch({ type: ActionType.ChangeColor })}
-      >
-        Color
+      <button className="bg-white" onClick={() => closeModal(modalData.number)}>
+        Close {modalData.number}
       </button>
     </div>
   );
 };
 
-// const useColorHandler = () => {
-//   const {
-//     state: { count },
-//   } = useAppContext();
-
-//   const [colorClass, setColorClass] = useState("bg-red-950");
-
-//   useLayoutEffect(() => {
-//     const value = Math.floor(Math.random() * colors.length);
-//     const colorString = colors[value];
-//     setColorClass(colorString);
-//   }, [count]);
-
-//   return colorClass;
+// type ModalFunctions = {
+//   open: (number: number) => void;
+//   close: () => void;
 // };
+
+// const Modal: React.ForwardRefRenderFunction<ModalFunctions, {}> = (
+//   props,
+//   ref
+// ) => {
+//   const [userNumber, setUserNumber] = useState<number>();
+
+//   useImperativeHandle(ref, () => ({
+//     open: (data) => {
+//       setUserNumber(data);
+//     },
+//     close: () => setUserNumber(undefined),
+//   }));
+
+//   console.log("Child rendered");
+//   const close = () => setUserNumber(undefined);
+
+//   if (!userNumber) return null;
+
+//   return (
+//     <div className="absolute w-1/2 aspect-square bg-blue-400 rounded-2xl flex flex-col items-center justify-center px-8">
+//       <h2 className="text-2xl text-center mb-5">User {userNumber}</h2>
+
+//       <button className="bg-white" onClick={close}>
+//         Close {userNumber}
+//       </button>
+//     </div>
+//   );
+// };
+
+// const ModalWithForwardRef = forwardRef<ModalFunctions>(Modal);
