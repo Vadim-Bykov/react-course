@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
+import clsx from "clsx";
 import React, {
-  ChangeEventHandler,
   Dispatch,
   Reducer,
   useContext,
+  useEffect,
+  useLayoutEffect,
   useReducer,
   useState,
-} from 'react';
+} from "react";
 
-type Colors = 'gold' | 'black';
+type Colors = "gold" | "black";
 
 interface State {
   color: Colors;
@@ -18,10 +20,10 @@ interface State {
 }
 
 enum ActionType {
-  ChangeText = 'CHANGE_TEXT',
-  ChangeColor = 'CHANGE_COLOR',
-  Increment = 'INCREMENT',
-  Decrement = 'DECREMENT',
+  ChangeText = "CHANGE_TEXT",
+  ChangeColor = "CHANGE_COLOR",
+  Increment = "INCREMENT",
+  Decrement = "DECREMENT",
 }
 
 interface Action {
@@ -41,7 +43,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
       return { ...state, count: state.count - 1 };
 
     case ActionType.ChangeColor:
-      return { ...state, color: state.color === 'gold' ? 'black' : 'gold' };
+      return { ...state, color: state.color === "gold" ? "black" : "gold" };
 
     default:
       return state;
@@ -49,135 +51,135 @@ const reducer: Reducer<State, Action> = (state, action) => {
 };
 
 const initialState: State = {
-  color: 'black',
-  randomText: '',
+  color: "black",
+  randomText: "",
   count: 0,
 };
 
-// interface Context {
-//   state: State;
-//   dispatch: Dispatch<Action>;
-// }
+interface Context {
+  state: State;
+  dispatch: Dispatch<Action>;
+}
 
-// const Context = React.createContext<Context>({
-//   state: initialState,
-//   dispatch: () => {},
-// });
+const Context = React.createContext<Context>({
+  state: initialState,
+  dispatch: () => {},
+});
 
-// const useAppContext = () => useContext(Context);
+const useAppContext = () => useContext(Context);
 
 export function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    // <Context.Provider value={{ dispatch, state }}>
-    <div>
-      <div>
-        <input
-          type='text'
-          placeholder='Use reducer text'
-          value={state.randomText}
-          onChange={(e) =>
-            dispatch({
-              type: ActionType.ChangeText,
-              payload: e.target.value,
-            })
-          }
-        />
+    <Context.Provider value={{ dispatch, state }}>
+      <InputComponent />
+      <p>{state.randomText}</p>
 
-        <div className='mt-3'>
-          <p style={{ color: state.color }}>Count: {state.count}</p>
-          <button
-            className='mr-5'
-            onClick={() => dispatch({ type: ActionType.Decrement })}
-          >
-            -
-          </button>
-          <button
-            className='mr-5'
-            onClick={() => dispatch({ type: ActionType.Increment })}
-          >
-            +
-          </button>
-          <button onClick={() => dispatch({ type: ActionType.ChangeColor })}>
-            Color
-          </button>
-        </div>
-
-        {/* <InputComponent
-          text={state.randomText}
-          onChange={(e) =>
-            dispatch({
-              type: ActionType.ChangeText,
-              payload: e.target.value,
-            })
-          }
-        />
-        <p>{state.randomText}</p> */}
-
-        {/* <ButtonBlock /> */}
-      </div>
-    </div>
+      <ButtonBlock />
+    </Context.Provider>
   );
 }
 
-// const InputComponent = ({
-//   text,
-//   onChange,
-// }: {
-//   text: string;
-//   onChange: ChangeEventHandler<HTMLInputElement>;
-// }) => {
-//   return (
-//     <>
-//       <div>Description and some content</div>
+const InputComponent = () => {
+  return (
+    <>
+      <div>Description and some content</div>
 
-//       <Field text={text} onChange={onChange} />
-//     </>
-//   );
-// };
+      <Field />
+    </>
+  );
+};
 
-// const Field = ({
-//   text,
-//   onChange,
-// }: {
-//   text: string;
-//   onChange: ChangeEventHandler<HTMLInputElement>;
-// }) => {
+const Field = () => {
+  const {
+    state: { randomText },
+    dispatch,
+  } = useAppContext();
+  // const colorClass = useColorHandler();
+
+  return (
+    <input
+      type="text"
+      placeholder="Use reducer text"
+      value={randomText}
+      // className={colorClass}
+      onChange={(e) =>
+        dispatch({
+          type: ActionType.ChangeText,
+          payload: e.target.value,
+        })
+      }
+    />
+  );
+};
+
+const colors = [
+  "bg-red-100",
+  "bg-red-200",
+  "bg-red-300",
+  "bg-red-400",
+  "bg-red-500",
+  "bg-red-600",
+  "bg-red-700",
+  "bg-red-800",
+  "bg-red-900",
+];
+
+const ButtonBlock = () => {
+  const {
+    state: { color, count },
+    dispatch,
+  } = useAppContext();
+
+  const [colorClass, setColorClass] = useState("bg-red-900");
+
+  useEffect(() => {
+    const value = Math.floor(Math.random() * colors.length);
+    const colorString = colors[value];
+    setColorClass(colorString);
+  }, [count]);
+
+  // const colorClass = useColorHandler();
+
+  return (
+    <div className="mt-3">
+      <div className={clsx(["w-10 h-10 mr-5", colorClass])} />
+      <p style={{ color: color }}>Count: {count}</p>
+      <button
+        className="mr-5"
+        onClick={() => dispatch({ type: ActionType.Decrement })}
+      >
+        -
+      </button>
+      <button
+        className="mr-5"
+        onClick={() => dispatch({ type: ActionType.Increment })}
+      >
+        +
+      </button>
+      <button
+        className={clsx(["mr-5", colorClass])}
+        onClick={() => dispatch({ type: ActionType.ChangeColor })}
+      >
+        Color
+      </button>
+    </div>
+  );
+};
+
+// const useColorHandler = () => {
 //   const {
-//     state: { randomText },
+//     state: { count },
 //   } = useAppContext();
-//   return (
-//     <input
-//       type='text'
-//       placeholder='Use reducer text'
-//       value={randomText}
-//       onChange={onChange}
-//     />
-//   );
-// };
 
-// const ButtonBlock = () => {
-//   const { state, dispatch } = useAppContext();
+//   const [colorClass, setColorClass] = useState("bg-red-950");
 
-//   return (
-//     <div className='mt-3'>
-//       <p style={{ color: state.color }}>Count: {state.count}</p>
-//       <button
-//         className='mr-5'
-//         onClick={() => dispatch({ type: ActionType.Decrement })}
-//       >
-//         -
-//       </button>
-//       <button
-//         className='mr-5'
-//         onClick={() => dispatch({ type: ActionType.Increment })}
-//       >
-//         +
-//       </button>
-//       <button onClick={() => dispatch({ type: ActionType.ChangeColor })}>
-//         Color
-//       </button>
-//     </div>
-//   );
+//   useLayoutEffect(() => {
+//     const value = Math.floor(Math.random() * colors.length);
+//     const colorString = colors[value];
+//     setColorClass(colorString);
+//   }, [count]);
+
+//   return colorClass;
 // };
