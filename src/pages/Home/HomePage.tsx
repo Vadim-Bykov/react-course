@@ -6,8 +6,9 @@ import {
   incrementByAmount,
   reset,
 } from "@/store/features/counter/counterSlice";
+import { addPost } from "@/store/features/posts/postsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, FormEventHandler, useState } from "react";
 
 interface ModalData {
   number: number;
@@ -15,50 +16,70 @@ interface ModalData {
 }
 
 export function HomePage() {
-  const count = useAppSelector((state) => state.counter.count);
+  const posts = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
-  const [value, setValue] = useState(0);
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
 
-  const onChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const inputValue = +e.currentTarget.value;
-
-    if (isNaN(inputValue)) return;
-
-    setValue(inputValue);
+  const onChangeTitle: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (!!e.target.value.trim()) {
+      setTitle(e.target.value);
+    }
   };
 
-  const resetAll = () => {
-    dispatch(reset());
-    setValue(0);
+  const onChangeContent: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (!!e.target.value.trim()) {
+      setContent(e.target.value);
+    }
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+  };
+
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    console.log("addPost");
+
+    dispatch(addPost({ title, content }));
+    resetForm();
   };
 
   return (
     <main>
-      <section>
-        <div className="mb-5">
-          <p>Count: {count}</p>
-          <div></div>
-          <button onClick={() => dispatch(decrement())}>-</button>
-          <button onClick={() => dispatch(increment())}>+</button>
-          <button onClick={() => dispatch(reset())}>Reset</button>
-        </div>
-
-        <div>
+      <section className="mb-9">
+        <form onSubmit={onSubmit}>
           <input
-            value={value}
-            typeof="number"
-            onChange={onChange}
+            value={title}
+            typeof="title"
+            placeholder="Enter title"
+            onChange={onChangeTitle}
             className="mb-2"
           />
           <br />
-          <button onClick={() => dispatch(incrementByAmount(-value))}>
-            - {value}
-          </button>
-          <button onClick={() => dispatch(incrementByAmount(value))}>
-            + {value}
-          </button>
-          <button onClick={resetAll}>Reset all</button>
-        </div>
+          <input
+            value={content}
+            typeof="content"
+            placeholder="Enter content"
+            onChange={onChangeContent}
+            className="mb-2"
+          />
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+      </section>
+
+      <section>
+        {posts.map(({ id, title, content }) => {
+          return (
+            <div className="mb-3" key={id}>
+              <p>{id}</p>
+              <p>{title}</p>
+              <p>{content}</p>
+            </div>
+          );
+        })}
       </section>
     </main>
   );
