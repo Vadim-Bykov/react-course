@@ -1,25 +1,38 @@
 "use client";
 
 import {
-  decrement,
-  increment,
-  incrementByAmount,
-  reset,
-} from "@/store/features/counter/counterSlice";
-import { addPost } from "@/store/features/posts/postsSlice";
+  addPost,
+  fetchPosts,
+  selectPosts,
+  selectPostsError,
+  selectPostsStatus,
+  Post,
+  addNewPost,
+} from "@/store/features/posts/postsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
-
-interface ModalData {
-  number: number;
-  visible: boolean;
-}
+import { nanoid } from "@reduxjs/toolkit";
+import moment from "moment";
+import React, {
+  ChangeEventHandler,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from "react";
 
 export function HomePage() {
-  const posts = useAppSelector((state) => state.posts);
+  const posts = useAppSelector(selectPosts);
+  const postsStatus = useAppSelector(selectPostsStatus);
+  const postsError = useAppSelector(selectPostsError);
+
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+
+  useEffect(() => {
+    if (postsStatus === "idle") {
+      dispatch(fetchPosts());
+    }
+  }, [dispatch, postsStatus]);
 
   const onChangeTitle: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (!!e.target.value.trim()) {
@@ -40,10 +53,37 @@ export function HomePage() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log("addPost");
 
-    dispatch(addPost({ title, content }));
+    if (title && content) {
+      // dispatch(addPost({ title, content }));
+      dispatch(
+        addNewPost({
+          title,
+          content,
+          id: nanoid(),
+          publishedAt: moment().format("DD/MM/YYYY HH:mm:ss"),
+        })
+      );
+    }
+
     resetForm();
+  };
+
+  const renderContent = () => {
+    switch (postsStatus) {
+      case "succeed":
+        return <PostsList posts={posts} />;
+
+      case "idle":
+      case "loading":
+        return <h1>Loading...</h1>;
+
+      case "failed":
+        return <h1 className="text-red-600">{postsError}</h1>;
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -70,17 +110,32 @@ export function HomePage() {
         </form>
       </section>
 
-      <section>
-        {posts.map(({ id, title, content }) => {
-          return (
-            <div className="mb-3" key={id}>
-              <p>{id}</p>
-              <p>{title}</p>
-              <p>{content}</p>
-            </div>
-          );
-        })}
-      </section>
+      {renderContent()}
     </main>
   );
 }
+
+const PostsList: React.FC<{ posts: Post[] }> = ({ posts }) => {
+  return (
+    <section>
+      {posts.map(({ id, title, content, publishedAt }) => {
+        return (
+          <div className="mb-3" key={id}>
+            <p>
+              <span className="font-bold">id:</span> {id}
+            </p>
+            <p>
+              <span className="font-bold">title:</span> {title}
+            </p>
+            <p>
+              <span className="font-bold">content:</span> {content}
+            </p>
+            <p>
+              <span className="font-bold">date:</span> {publishedAt}
+            </p>
+          </div>
+        );
+      })}
+    </section>
+  );
+};
