@@ -1,7 +1,11 @@
 "use client";
 
 import {
-  addPost,
+  useCreatePostMutation,
+  useGetPostsQuery,
+} from "@/store/features/api/apiSlice";
+import {
+  // addPost,
   fetchPosts,
   selectPosts,
   selectPostsError,
@@ -11,6 +15,7 @@ import {
 } from "@/store/features/posts/postsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { nanoid } from "@reduxjs/toolkit";
+import { QueryStatus } from "@reduxjs/toolkit/dist/query";
 import moment from "moment";
 import React, {
   ChangeEventHandler,
@@ -20,19 +25,27 @@ import React, {
 } from "react";
 
 export function HomePage() {
-  const posts = useAppSelector(selectPosts);
-  const postsStatus = useAppSelector(selectPostsStatus);
-  const postsError = useAppSelector(selectPostsError);
+  // const posts = useAppSelector(selectPosts);
+  // const postsStatus = useAppSelector(selectPostsStatus);
+  // const postsError = useAppSelector(selectPostsError);
 
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
-  useEffect(() => {
-    if (postsStatus === "idle") {
-      dispatch(fetchPosts());
-    }
-  }, [dispatch, postsStatus]);
+  // useEffect(() => {
+  //   if (postsStatus === "idle") {
+  //     dispatch(fetchPosts());
+  //   }
+  // }, [dispatch, postsStatus]);
+
+  const {
+    data: posts,
+    status,
+    error: postsError,
+    refetch,
+  } = useGetPostsQuery();
+  const [addPost] = useCreatePostMutation();
 
   const onChangeTitle: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (!!e.target.value.trim()) {
@@ -56,30 +69,37 @@ export function HomePage() {
 
     if (title && content) {
       // dispatch(addPost({ title, content }));
-      dispatch(
-        addNewPost({
-          title,
-          content,
-          id: nanoid(),
-          publishedAt: moment().format("DD/MM/YYYY HH:mm:ss"),
-        })
-      );
+      addPost({
+        title,
+        content,
+        id: nanoid(),
+        publishedAt: moment().format("DD/MM/YYYY HH:mm:ss"),
+      });
+
+      // dispatch(
+      //   addNewPost({
+      //     title,
+      //     content,
+      //     id: nanoid(),
+      //     publishedAt: moment().format("DD/MM/YYYY HH:mm:ss"),
+      //   })
+      // );
     }
 
     resetForm();
   };
 
   const renderContent = () => {
-    switch (postsStatus) {
-      case "succeed":
+    switch (status) {
+      case QueryStatus.fulfilled:
         return <PostsList posts={posts} />;
 
-      case "idle":
-      case "loading":
+      case QueryStatus.pending:
+      case QueryStatus.uninitialized:
         return <h1>Loading...</h1>;
 
-      case "failed":
-        return <h1 className="text-red-600">{postsError}</h1>;
+      case QueryStatus.rejected:
+        return <h1 className="text-red-600">{JSON.stringify(postsError)}</h1>;
 
       default:
         return null;
@@ -115,10 +135,10 @@ export function HomePage() {
   );
 }
 
-const PostsList: React.FC<{ posts: Post[] }> = ({ posts }) => {
+const PostsList: React.FC<{ posts?: Post[] }> = ({ posts }) => {
   return (
     <section>
-      {posts.map(({ id, title, content, publishedAt }) => {
+      {posts?.map(({ id, title, content, publishedAt }) => {
         return (
           <div className="mb-3" key={id}>
             <p>

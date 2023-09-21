@@ -1,5 +1,6 @@
 import { RootState } from "@/store/store";
 import {
+  AsyncThunk,
   PayloadAction,
   createAsyncThunk,
   createSlice,
@@ -21,14 +22,17 @@ interface PostsState {
 
 const POSTS_URL = "https://jsonplaceholder.org/posts";
 
-export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  try {
-    const response = await axios.get(POSTS_URL);
-    return response.data;
-  } catch (error: any) {
-    return error.message;
+export const fetchPosts: AsyncThunk<any, string, {}> = createAsyncThunk(
+  "posts/fetchPosts",
+  async () => {
+    try {
+      const response = await axios.get(POSTS_URL);
+      return response.data;
+    } catch (error: any) {
+      return error.message;
+    }
   }
-});
+);
 
 export const addNewPost = createAsyncThunk(
   "posts/addNewPost",
