@@ -4,7 +4,9 @@ import { Post } from "../posts/postsSlice";
 export const appApi = createApi({
   reducerPath: "api",
   tagTypes: ["Posts"],
-  baseQuery: fetchBaseQuery({ baseUrl: "https://jsonplaceholder.org/" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:3500/",
+  }),
   endpoints: (builder) => ({
     getPosts: builder.query<Post[], void>({
       query: () => "posts",
