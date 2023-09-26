@@ -1,5 +1,5 @@
-import { MIN_AGE } from '@/pages/users/constants/rules';
-import styles from './styles.module.css';
+import { MIN_AGE } from "@/layout/users/constants/rules";
+import styles from "./styles.module.css";
 
 export function SearchBar({
   filterText,
@@ -13,20 +13,20 @@ export function SearchBar({
   onAgeRestrictionChange: (checked: boolean) => void;
 }) {
   return (
-    <form style={{ alignSelf: 'center' }}>
+    <form style={{ alignSelf: "center" }}>
       <input
-        type='text'
+        type="text"
         value={filterText}
-        placeholder='Search...'
+        placeholder="Search..."
         onChange={(e) => onFilterTextChange(e.target.value)}
         className={styles.searchInput}
       />
       <label>
         <input
-          type='checkbox'
+          type="checkbox"
           checked={ageRestriction}
           onChange={(e) => onAgeRestrictionChange(e.target.checked)}
-        />{' '}
+        />{" "}
         Only users over {MIN_AGE}
       </label>
     </form>

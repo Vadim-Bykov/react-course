@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { getUsers } from '@/api/users';
-import { FilterableUserList } from '@/pages/users/FilterableUserList';
-import { User } from '@/pages/users/types';
-import React, { useEffect, useState } from 'react';
+import { getUsers } from "@/api/users";
+import { FilterableUserList } from "@/layout/users/FilterableUserList";
+import { User } from "@/layout/users/types";
+import React, { useEffect, useState } from "react";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>();
