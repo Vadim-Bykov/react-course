@@ -1,0 +1,7 @@
+{
+  "/page": "/",
+  "/icon.ico/route": "/icon.ico",
+  "/posts/page": "/posts",
+  "/users/page": "/users",
+  "/users/[userId]/page": "/users/[userId]"
+}
