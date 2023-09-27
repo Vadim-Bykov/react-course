@@ -1,8 +1,8 @@
-import { User } from '@/pages/users/types';
+import { User } from "@/lib/users/types";
 
 export const getUsers = async () => {
-  const res = await fetch('https://jsonplaceholder.org/users');
-  if (!res?.ok) throw new Error('Failed to fetch users');
+  const res = await fetch("https://jsonplaceholder.org/users");
+  if (!res?.ok) throw new Error("Failed to fetch users");
 
   const users: User[] = await res.json();
 
@@ -25,7 +25,7 @@ export const getUsers = async () => {
 export const getUserById = async (userId: string) => {
   return fetch(`https://jsonplaceholder.org/users/${userId}`)
     .then((res) => {
-      if (!res?.ok) throw new Error('Failed to fetch user');
+      if (!res?.ok) throw new Error("Failed to fetch user");
       return res.json();
     })
     .catch((error) => {

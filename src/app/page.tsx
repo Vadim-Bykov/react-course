@@ -1,4 +1,4 @@
-import { HomePage } from '@/pages/Home/HomePage';
+import { HomePage } from "@/lib/Home/HomePage";
 
 export default function App() {
   return <HomePage />;

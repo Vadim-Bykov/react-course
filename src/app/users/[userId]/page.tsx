@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { getUserById } from '@/api/users';
-import { User } from '@/pages/users/components/User';
-import { User as UserType } from '@/pages/users/types';
-import { useEffect, useState } from 'react';
-import Loading from '../../loading';
-import { ErrorComponent } from '@/components/common/ErrorComponent';
+import { getUserById } from "@/api/users";
+import { User } from "@/lib/users/components/User";
+import { User as UserType } from "@/lib/users/types";
+import { useEffect, useState } from "react";
+import Loading from "../../loading";
+import { ErrorComponent } from "@/components/common/ErrorComponent";
 
 interface Props {
   params: { userId: string };
