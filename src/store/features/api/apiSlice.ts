@@ -5,7 +5,7 @@ export const appApi = createApi({
   reducerPath: "api",
   tagTypes: ["Posts"],
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3500/",
+    baseUrl: "https://jsonplaceholder.org/",
   }),
   endpoints: (builder) => ({
     getPosts: builder.query<Post[], void>({
